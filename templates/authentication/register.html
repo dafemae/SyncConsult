@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Crear Cuenta{% endblock %}
+
+{% block extra_css %}
+<style>
+  body {
+    background: linear-gradient(135deg, #1a73e8 0%, #6c3fc5 100%);
+    min-height: 100vh;
+  }
+  .auth-card {
+    width: 100%;
+    max-width: 520px;
+    border-radius: 20px;
+    padding: 2.5rem;
+    box-shadow: 0 24px 64px rgba(0,0,0,.18);
+  }
+  .auth-logo {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #1a73e8, #6c3fc5);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 1.25rem;
+  }
+  .form-control-lg { border-radius: 10px; border: 1.5px solid #dee2e6; }
+  .form-control-lg:focus { border-color: #1a73e8; box-shadow: 0 0 0 3px rgba(26,115,232,.15); }
+  .btn-register {
+    background: linear-gradient(135deg, #1a73e8, #6c3fc5);
+    border: none; border-radius: 10px;
+    font-weight: 600; letter-spacing: .3px;
+    transition: opacity .2s;
+  }
+  .btn-register:hover { opacity: .9; }
+  .field-label { font-size:.85rem; font-weight:600; color:#6c757d; text-transform:uppercase; letter-spacing:.4px; }
+  .password-hint { font-size:.78rem; color:#adb5bd; margin-top:.3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid d-flex align-items-center justify-content-center py-5">
+  <div class="auth-card bg-white">
+
+    <div class="auth-logo">
+      <i class="bi bi-person-plus-fill text-white fs-4"></i>
+    </div>
+
+    <h4 class="text-center fw-bold mb-1">Crear una cuenta</h4>
+    <p class="text-center text-muted mb-4" style="font-size:.9rem;">Completa el formulario para registrarte</p>
+
+    <form method="post" novalidate>
+      {% csrf_token %}
+
+      <div class="row g-3 mb-3">
+        <div class="col-sm-6">
+          <label class="field-label form-label">{{ form.first_name.label }}</label>
+          {{ form.first_name }}
+          {% if form.first_name.errors %}
+          <div class="text-danger mt-1" style="font-size:.82rem;">{{ form.first_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <div class="col-sm-6">
+          <label class="field-label form-label">{{ form.last_name.label }}</label>
+          {{ form.last_name }}
+          {% if form.last_name.errors %}
+          <div class="text-danger mt-1" style="font-size:.82rem;">{{ form.last_name.errors.0 }}</div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label class="field-label form-label">{{ form.email.label }}</label>
+        {{ form.email }}
+        {% if form.email.errors %}
+        <div class="text-danger mt-1" style="font-size:.82rem;">{{ form.email.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
+        <label class="field-label form-label">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+        <div class="password-hint">Mínimo 8 caracteres. No puede ser solo números.</div>
+        {% if form.password1.errors %}
+        <div class="text-danger mt-1" style="font-size:.82rem;">{{ form.password1.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-4">
+        <label class="field-label form-label">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+        {% if form.password2.errors %}
+        <div class="text-danger mt-1" style="font-size:.82rem;">{{ form.password2.errors.0 }}</div>
+        {% endif %}
+      </div>
+
+      <button type="submit" class="btn btn-register btn-lg w-100 text-white mb-3">
+        <i class="bi bi-person-check me-2"></i>Crear cuenta
+      </button>
+    </form>
+
+    <div class="text-center" style="color:#adb5bd; font-size:.85rem;">
+      ¿Ya tienes cuenta?
+      <a href="{% url 'authentication:login' %}" class="text-primary fw-semibold text-decoration-none">
+        Inicia sesión
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

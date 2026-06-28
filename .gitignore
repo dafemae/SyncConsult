@@ -1,0 +1,39 @@
+ 
+# Entorno virtual
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+db.sqlite3
+db.sqlite3-journal
+
+# Variables de entorno
+.env
+.env.*
+
+# Archivos subidos
+media/*
+staticfiles/
+
+# IDE
+.vscode/
+.idea/
+
+# Tests
+.coverage
+htmlcov/
+.pytest_cache/
+
+# Herramientas
+.ruff_cache/
+.mypy_cache/
+
+# Configuración personal
+CLAUDE.md

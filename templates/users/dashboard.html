@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block extra_css %}
+<style>
+  .welcome-card {
+    background: linear-gradient(135deg, #1a73e8 0%, #6c3fc5 100%);
+    border-radius: 16px;
+    color: #fff;
+  }
+  .feature-card {
+    border-radius: 14px;
+    border: none;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    transition: transform .2s, box-shadow .2s;
+    cursor: pointer;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 28px rgba(0,0,0,.12);
+    color: inherit;
+  }
+  .feature-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .stat-badge {
+    font-size: .78rem;
+    padding: .3rem .7rem;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+
+  <!-- Bienvenida -->
+  <div class="welcome-card p-4 mb-4">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <h4 class="fw-bold mb-1">
+          Hola, {{ user.first_name|default:user.email }} 👋
+        </h4>
+        <p class="mb-0 opacity-75">Aquí tienes un resumen de tu sistema.</p>
+      </div>
+      <div class="text-end">
+        <small class="opacity-75">Hoy es</small><br>
+        <strong id="fecha-hoy"></strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- Módulos -->
+  <h6 class="text-muted fw-semibold mb-3" style="letter-spacing:.5px;">MÓDULOS DEL SISTEMA</h6>
+  <div class="row g-3">
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#e8f0fe;">
+          <i class="bi bi-kanban-fill" style="color:#1a73e8;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Proyectos</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Gestiona y da seguimiento a todos tus proyectos activos.</p>
+        <span class="stat-badge" style="background:#e8f0fe; color:#1a73e8;">
+          <i class="bi bi-arrow-right me-1"></i>Gestionar
+        </span>
+      </a>
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#fce8f3;">
+          <i class="bi bi-people-fill" style="color:#c2185b;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Usuarios</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Administra los usuarios y sus permisos en el sistema.</p>
+        <span class="stat-badge" style="background:#fce8f3; color:#c2185b;">
+          <i class="bi bi-arrow-right me-1"></i>Administrar
+        </span>
+      </a>
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#e8f5e9;">
+          <i class="bi bi-shield-lock-fill" style="color:#2e7d32;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Ciberseguridad</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Monitorea incidentes y gestiona la seguridad digital.</p>
+        <span class="stat-badge" style="background:#e8f5e9; color:#2e7d32;">
+          <i class="bi bi-arrow-right me-1"></i>Revisar
+        </span>
+      </a>
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#fff3e0;">
+          <i class="bi bi-megaphone-fill" style="color:#e65100;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Marketing</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Planifica campañas y analiza resultados de marketing.</p>
+        <span class="stat-badge" style="background:#fff3e0; color:#e65100;">
+          <i class="bi bi-arrow-right me-1"></i>Explorar
+        </span>
+      </a>
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#ede7f6;">
+          <i class="bi bi-sliders2-vertical" style="color:#6c3fc5;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Configuración</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Ajusta los parámetros y configuración del sistema.</p>
+        <span class="stat-badge" style="background:#ede7f6; color:#6c3fc5;">
+          <i class="bi bi-arrow-right me-1"></i>Configurar
+        </span>
+      </a>
+    </div>
+
+    <div class="col-sm-6 col-lg-4">
+      <a href="#" class="feature-card card p-4">
+        <div class="feature-icon" style="background:#fafafa;">
+          <i class="bi bi-clipboard2-data-fill" style="color:#455a64;"></i>
+        </div>
+        <h6 class="fw-bold mb-1">Auditoría</h6>
+        <p class="text-muted mb-2" style="font-size:.87rem;">Consulta el historial de actividad y registros del sistema.</p>
+        <span class="stat-badge" style="background:#eceff1; color:#455a64;">
+          <i class="bi bi-arrow-right me-1"></i>Ver registros
+        </span>
+      </a>
+    </div>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  const d = new Date();
+  const opts = { weekday:'long', year:'numeric', month:'long', day:'numeric' };
+  document.getElementById('fecha-hoy').textContent =
+    d.toLocaleDateString('es-CL', opts).replace(/^\w/, c => c.toUpperCase());
+</script>
+{% endblock %}
