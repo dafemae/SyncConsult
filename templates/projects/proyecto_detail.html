@@ -1,0 +1,195 @@
+{% extends "base.html" %}
+{% block title %}{{ proyecto.nombre }}{% endblock %}
+
+{% block extra_css %}
+<style>
+  .header-proyecto {
+    background: linear-gradient(135deg, #1565c0 0%, #4a148c 100%);
+    border-radius: 16px; color: #fff;
+  }
+  .stat-badge-mini {
+    font-size:.75rem; padding:.25rem .65rem; border-radius:20px; font-weight:600;
+  }
+  .section-card { border-radius:14px; border:none; box-shadow:0 2px 12px rgba(0,0,0,.06); }
+  .task-item {
+    border-radius:10px; border:1px solid #f0f0f0;
+    padding:.75rem 1rem; margin-bottom:.5rem;
+    transition: background .15s;
+  }
+  .task-item:hover { background:#f8f9fa; }
+  .badge-estado-pendiente  { background:#f5f5f5; color:#616161; }
+  .badge-estado-en_progreso{ background:#fff3e0; color:#e65100; }
+  .badge-estado-revision   { background:#e8f0fe; color:#1a73e8; }
+  .badge-estado-completada { background:#e8f5e9; color:#2e7d32; }
+  .badge-estado-cancelada  { background:#fce4ec; color:#b71c1c; }
+  .badge-prio-critica{ background:#fce4ec; color:#b71c1c; }
+  .badge-prio-alta   { background:#fff3e0; color:#e65100; }
+  .badge-prio-media  { background:#e8f0fe; color:#1a73e8; }
+  .badge-prio-baja   { background:#f5f5f5; color:#757575; }
+  .progress { height:6px; border-radius:6px; }
+  .section-title { font-size:.78rem; font-weight:700; color:#9e9e9e; letter-spacing:.6px; text-transform:uppercase; }
+  .req-item { border-radius:10px; padding:.75rem 1rem; border:1px solid #f0f0f0; margin-bottom:.5rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid px-4 py-4">
+
+  <!-- Breadcrumb -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb" style="font-size:.85rem;">
+      <li class="breadcrumb-item"><a href="{% url 'users:dashboard' %}" class="text-decoration-none">Dashboard</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'projects:clientes_list' %}" class="text-decoration-none">Clientes</a></li>
+      <li class="breadcrumb-item">
+        <a href="{% url 'projects:cliente_dashboard' proyecto.cliente.pk %}" class="text-decoration-none">
+          {{ proyecto.cliente.nombre }}
+        </a>
+      </li>
+      <li class="breadcrumb-item active">{{ proyecto.nombre }}</li>
+    </ol>
+  </nav>
+
+  <!-- Header -->
+  <div class="header-proyecto p-4 mb-4">
+    <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h4 class="fw-bold mb-0">{{ proyecto.nombre }}</h4>
+          <span class="badge badge-{{ proyecto.estado }} px-2 py-1 rounded-pill" style="font-size:.78rem;">
+            {{ proyecto.get_estado_display }}
+          </span>
+        </div>
+        {% if proyecto.descripcion %}
+        <p class="mb-2 opacity-85" style="font-size:.9rem;">{{ proyecto.descripcion }}</p>
+        {% endif %}
+        <div class="d-flex gap-3 opacity-75" style="font-size:.82rem;">
+          <span><i class="bi bi-people me-1"></i>{{ proyecto.miembros.count }} miembros</span>
+          {% if proyecto.fecha_inicio %}<span><i class="bi bi-calendar me-1"></i>Inicio: {{ proyecto.fecha_inicio }}</span>{% endif %}
+          {% if proyecto.fecha_fin %}<span><i class="bi bi-calendar-check me-1"></i>Fin: {{ proyecto.fecha_fin }}</span>{% endif %}
+          {% if sprint_activo %}<span><i class="bi bi-lightning me-1"></i>Sprint: {{ sprint_activo.nombre }}</span>{% endif %}
+        </div>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <button class="btn btn-light btn-sm rounded-3 px-3"><i class="bi bi-pencil me-1"></i>Editar</button>
+        <a href="{% url 'projects:cliente_dashboard' proyecto.cliente.pk %}"
+           class="btn btn-outline-light btn-sm rounded-3 px-3">
+          <i class="bi bi-arrow-left me-1"></i>Volver
+        </a>
+      </div>
+    </div>
+
+    <!-- Progreso general -->
+    <div class="mt-3 pt-3 border-top border-white border-opacity-25">
+      <div class="d-flex justify-content-between mb-1" style="font-size:.82rem;">
+        <span>Progreso general</span>
+        <span class="fw-bold">{{ progreso }}%</span>
+      </div>
+      <div class="progress" style="background:rgba(255,255,255,.2);">
+        <div class="progress-bar bg-white" style="width:{{ progreso }}%;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats mini -->
+  <div class="row g-3 mb-4">
+    {% for estado, total in tareas_por_estado.items %}
+    <div class="col-6 col-md-3">
+      <div class="section-card card p-3 text-center">
+        <div class="fs-3 fw-bold">{{ total }}</div>
+        <span class="stat-badge-mini badge-estado-{{ estado }}">{{ estado|title }}</span>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="row g-4">
+    <!-- Tareas -->
+    <div class="col-lg-7">
+      <div class="section-card card p-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="section-title">Tareas</span>
+          <button class="btn btn-primary btn-sm rounded-3 px-3">
+            <i class="bi bi-plus me-1"></i>Nueva tarea
+          </button>
+        </div>
+
+        {% if tareas %}
+          {% for tarea in tareas %}
+          <div class="task-item">
+            <div class="d-flex align-items-center justify-content-between gap-2">
+              <div class="flex-grow-1 min-w-0">
+                <div class="fw-semibold text-truncate" style="font-size:.9rem;">{{ tarea.titulo }}</div>
+                {% if tarea.usuario %}
+                <small class="text-muted">
+                  <i class="bi bi-person me-1"></i>{{ tarea.usuario.get_full_name|default:tarea.usuario.email }}
+                </small>
+                {% endif %}
+              </div>
+              <div class="d-flex gap-1 flex-shrink-0">
+                <span class="stat-badge-mini badge-prio-{{ tarea.prioridad }}">{{ tarea.get_prioridad_display }}</span>
+                <span class="stat-badge-mini badge-estado-{{ tarea.estado }}">{{ tarea.get_estado_display }}</span>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="text-center py-3">
+            <i class="bi bi-check2-square text-muted" style="font-size:2rem; opacity:.3;"></i>
+            <p class="text-muted mt-2 mb-0" style="font-size:.87rem;">Sin tareas aún</p>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Requerimientos -->
+    <div class="col-lg-5">
+      <div class="section-card card p-4 mb-4">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="section-title">Requerimientos</span>
+          <button class="btn btn-outline-primary btn-sm rounded-3 px-3">
+            <i class="bi bi-plus me-1"></i>Nuevo
+          </button>
+        </div>
+        {% if requerimientos %}
+          {% for req in requerimientos %}
+          <div class="req-item">
+            <div class="d-flex justify-content-between align-items-start gap-2">
+              <span class="fw-semibold" style="font-size:.87rem;">{{ req.titulo }}</span>
+              <span class="stat-badge-mini badge-prio-{{ req.prioridad }} flex-shrink-0">{{ req.get_prioridad_display }}</span>
+            </div>
+            <div class="d-flex gap-2 mt-1">
+              <span class="badge" style="font-size:.72rem; background:#f5f5f5; color:#555;">
+                {{ req.get_estado_display }}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <p class="text-muted mb-0" style="font-size:.85rem;">Sin requerimientos</p>
+        {% endif %}
+      </div>
+
+      <!-- Miembros -->
+      {% if proyecto.miembros.all %}
+      <div class="section-card card p-4">
+        <span class="section-title d-block mb-3">Equipo</span>
+        {% for miembro in proyecto.miembros.all %}
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <div class="avatar-sm">
+            {{ miembro.usuario.first_name|first|upper }}{{ miembro.usuario.last_name|first|upper }}
+          </div>
+          <div>
+            <div style="font-size:.87rem; font-weight:600;">
+              {{ miembro.usuario.get_full_name|default:miembro.usuario.email }}
+            </div>
+            <div style="font-size:.77rem; color:#9e9e9e;">{{ miembro.get_rol_display }}</div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

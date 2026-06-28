@@ -7,4 +7,5 @@ urlpatterns = [
     path("", lambda _: redirect("authentication:login"), name="home"),
     path("auth/", include("authentication.urls")),
     path("usuarios/", include("users.urls")),
+    path("proyectos/", include("projects.urls")),
 ]
